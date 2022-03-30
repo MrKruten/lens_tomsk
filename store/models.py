@@ -64,7 +64,7 @@ class Discount(models.Model):
         ordering = ["-date_end"]
 
     def __str__(self):
-        return '%s %s - %s' % (self.product, self.date_start, self.date_end)
+        return '%s %s - %s' % (self.product.name, self.date_start, self.date_end)
 
     @property
     def is_overdue(self):
@@ -79,7 +79,7 @@ class ImageProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт", verbose_name="Продукт")
 
     def __str__(self):
-        return self.product
+        return self.product.name
 
     class Meta:
         db_table = "store_image_product"
@@ -106,7 +106,7 @@ class UserInfo(models.Model):
                                verbose_name="Аватар пользователя", null=True, blank=True)
 
     def __str__(self):
-        return self.user
+        return self.user.email
 
     class Meta:
         db_table = "user_info"
@@ -123,7 +123,7 @@ class Bonus(models.Model):
         ordering = ["date_end"]
 
     def __str__(self):
-        return '%s %d %s - %s' % (self.user, self.quantity, self.date_start, self.date_end)
+        return '%s %d %s - %s' % (self.user.email, self.quantity, self.date_start, self.date_end)
 
     @property
     def is_overdue(self):
@@ -141,7 +141,7 @@ class Order(models.Model):
         ordering = ["order_date"]
 
     def __str__(self):
-        return '%s: order - %d %s' % (self.user, self.id, self.order_date)
+        return '%s: order - %d %s' % (self.user.email, self.id, self.order_date)
 
 
 class OrderProduct(models.Model):
@@ -152,7 +152,7 @@ class OrderProduct(models.Model):
     quantity = models.PositiveIntegerField(help_text="Введите количество товара", verbose_name="Количество товара")
 
     def __str__(self):
-        return '%s %s %d' % (self.product, self.order, self.quantity)
+        return '%s %s %d' % (self.product.name, self.order, self.quantity)
 
     class Meta:
         db_table = "store_order_product"
@@ -165,4 +165,4 @@ class Basket(models.Model):
                              verbose_name="Пользователь")
 
     def __str__(self):
-        return '%s %s' % (self.user, self.product)
+        return '%s %s' % (self.user.email, self.product.name)
