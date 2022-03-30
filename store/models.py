@@ -12,8 +12,8 @@ class Manufacture(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=64, help_text="Введите название категории", verbose_name="Название категории")
-    image = models.ImageField(upload_to='images/categories/% Y/% m/% d/', help_text="Загрузите изображение",
-                              verbose_name="Изображение категории", null=True, blank=True)
+    image = models.ImageField(upload_to='images/categories/%Y/%m/%d/', help_text="Загрузите изображение",
+                              verbose_name="Изображение категории", null=True, blank=True, )
 
     def __str__(self):
         return self.name
@@ -74,7 +74,7 @@ class Discount(models.Model):
 
 
 class ImageProduct(models.Model):
-    image = models.ImageField(upload_to='images/products/% Y/% m/% d/', help_text="Загрузите изображение продукта",
+    image = models.ImageField(upload_to='images/products/%Y/%m/%d/', help_text="Загрузите изображение продукта",
                               verbose_name="Изображение продукта")
     product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт", verbose_name="Продукт")
 
@@ -102,7 +102,7 @@ class UserInfo(models.Model):
                             verbose_name="Город")
     address = models.CharField(max_length=64, null=True, blank=True, help_text="Введите адрес",
                                verbose_name="Адрес")
-    avatar = models.ImageField(upload_to='images/avatars/% Y/% m/% d/', help_text="Загрузите изображение",
+    avatar = models.ImageField(upload_to='images/avatars/%Y/%m/%d/', help_text="Загрузите изображение",
                                verbose_name="Аватар пользователя", null=True, blank=True)
 
     def __str__(self):
