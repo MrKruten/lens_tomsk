@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import CategoryView
+from .views import CategoryView, ProductView
 
-app_name = "categorys"
+app_name = "store"
 # app_name will help us do a reverse look-up latter.
 urlpatterns = [
-    path('categorys/', CategoryView.as_view()),
+    path('categories/', CategoryView.as_view()),
+    path('products/', ProductView.as_view()),
 ]

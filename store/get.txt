@@ -1,6 +1,5 @@
 store.urls
 
-from django.urls import path
 from .views import CategoryView
 app_name = "categorys"
 # app_name will help us do a reverse look-up latter.
@@ -29,8 +28,6 @@ class CategorySerializer(serializers.Serializer):
 
 store.views
 
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from .models import Category
 from .serializers import CategorySerializer
 class CategoryView(APIView):
