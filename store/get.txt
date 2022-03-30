@@ -1,0 +1,41 @@
+store.urls
+
+from django.urls import path
+from .views import CategoryView
+app_name = "categorys"
+# app_name will help us do a reverse look-up latter.
+urlpatterns = [
+    path('categorys/', CategoryView.as_view()),
+]
+
+-------------------------------------------
+
+lens_tomsk.urls
+
+urlpatterns = [
+    path('api/', include('store.urls')),
+]
+
+-------------------------------------------
+
+store.serializers
+
+from rest_framework import serializers
+class CategorySerializer(serializers.Serializer):
+    name = serializers.CharField()
+    image = serializers.ImageField()
+
+-------------------------------------------
+
+store.views
+
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import Category
+from .serializers import CategorySerializer
+class CategoryView(APIView):
+    def get(self, request):
+        categorys = Category.objects.all()
+        # the many param informs the serializer that it will be serializing more than a single article.
+        serializer = CategorySerializer(categorys, many=True)
+        return Response({"categorys": serializer.data})
