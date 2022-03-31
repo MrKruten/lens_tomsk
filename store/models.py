@@ -19,14 +19,22 @@ class Category(models.Model):
         return self.name
 
 
+class Option(models.Model):
+    name = models.CharField(help_text="Введите название опции", verbose_name="Название опции", max_length=64)
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     name = models.CharField(max_length=64, help_text="Введите название продукта", verbose_name="Название продукта")
     price = models.DecimalField(max_digits=15, decimal_places=4, help_text="Введите цену", verbose_name="Цена продукта")
     description = models.TextField(help_text="Введите описание", verbose_name="Описание продукта")
-    quantity = models.PositiveIntegerField(help_text="Введите количество продукта", verbose_name="Описание продукта")
+    quantity = models.PositiveIntegerField(help_text="Введите количество продукта", verbose_name="Количество продукта")
     manufacture = models.ForeignKey(Manufacture, on_delete=models.CASCADE, help_text="Выберите компанию",
                                     verbose_name="Компания")
-    categories = models.ManyToManyField(Category, help_text="Выберите категорию", verbose_name="Категория")
+    categories = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории")
+    options = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции")
 
     class Meta:
         ordering = ["price", "quantity"]
@@ -44,13 +52,15 @@ class Characteristic(models.Model):
         return self.name
 
 
-class Option(models.Model):
-    name = models.TextField(help_text="Введите название опции", verbose_name="Название опции")
-    description = models.TextField(help_text="Введите описание опции", verbose_name="Описание опции")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт", verbose_name="Продукт")
+class OptionValue(models.Model):
+    option = models.ForeignKey(Option, on_delete=models.CASCADE, help_text="Выберите опцию", verbose_name="Опция")
+    value = models.CharField(help_text="Введите значение опции", verbose_name="Значение опции", max_length=64)
+
+    class Meta:
+        db_table = "store_option_value"
 
     def __str__(self):
-        return self.name
+        return '%s %s' % (self.option.name, self.value)
 
 
 class Discount(models.Model):

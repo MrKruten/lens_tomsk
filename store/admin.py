@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Manufacture, Category, Bonus, Basket, UserInfo, Discount, Characteristic, OrderProduct, Order, \
-    Option, ImageProduct, Product
+    Option, ImageProduct, Product, OptionValue
 
 admin.site.register(ImageProduct)
 
@@ -20,10 +20,6 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ['name']
 
 
-class OptionInline(admin.TabularInline):
-    model = Option
-
-
 class ImageProductInline(admin.TabularInline):
     model = ImageProduct
 
@@ -36,15 +32,20 @@ class CharacteristicInline(admin.TabularInline):
     model = Characteristic
 
 
+class OptionValueInline(admin.TabularInline):
+    model = OptionValue
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_filter = ('price', 'quantity', 'name')
-    inlines = [OptionInline, ImageProductInline, DiscountInline, CharacteristicInline]
+    inlines = [ImageProductInline, DiscountInline, CharacteristicInline]
 
 
 @admin.register(Option)
 class OptionAdmin(admin.ModelAdmin):
     list_filter = ('name', 'product')
+    inlines = [OptionValueInline]
 
 
 @admin.register(Characteristic)
