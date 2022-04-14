@@ -9,14 +9,6 @@ urlpatterns = [
 
 -------------------------------------------
 
-lens_tomsk.urls
-
-urlpatterns = [
-    path('api/', include('store.urls')),
-]
-
--------------------------------------------
-
 store.serializers
 
 from rest_framework import serializers

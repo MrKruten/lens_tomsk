@@ -6,6 +6,9 @@ from datetime import date
 class Manufacture(models.Model):
     name = models.CharField(max_length=64, help_text="Введите название компании", verbose_name="Название компании")
 
+    class Meta:
+        verbose_name_plural = "Производитель"
+
     def __str__(self):
         return self.name
 
@@ -15,12 +18,18 @@ class Category(models.Model):
     image = models.ImageField(upload_to='images/categories/%Y/%m/%d/', help_text="Загрузите изображение",
                               verbose_name="Изображение категории", null=True, blank=True, )
 
+    class Meta:
+        verbose_name_plural = "Категории"
+
     def __str__(self):
         return self.name
 
 
 class Option(models.Model):
     name = models.CharField(help_text="Введите название опции", verbose_name="Название опции", max_length=64)
+
+    class Meta:
+        verbose_name_plural = "Опции"
 
     def __str__(self):
         return self.name
@@ -38,6 +47,7 @@ class Product(models.Model):
 
     class Meta:
         ordering = ["price", "quantity"]
+        verbose_name_plural = "Товары"
 
     def __str__(self):
         return self.name
@@ -47,6 +57,9 @@ class Characteristic(models.Model):
     name = models.TextField(help_text="Введите название характеристики", verbose_name="Название категории")
     description = models.TextField(help_text="Введите описание характеристики", verbose_name="Описание характеристики")
     product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт", verbose_name="Продукт")
+
+    class Meta:
+        verbose_name_plural = "Характеристики"
 
     def __str__(self):
         return self.name
@@ -58,6 +71,7 @@ class OptionValue(models.Model):
 
     class Meta:
         db_table = "store_option_value"
+        verbose_name_plural = "Значения опций"
 
     def __str__(self):
         return '%s %s' % (self.option.name, self.value)
@@ -72,6 +86,7 @@ class Discount(models.Model):
 
     class Meta:
         ordering = ["-date_end"]
+        verbose_name_plural = "Скидки"
 
     def __str__(self):
         return '%s %s - %s' % (self.product.name, self.date_start, self.date_end)
@@ -93,6 +108,7 @@ class ImageProduct(models.Model):
 
     class Meta:
         db_table = "store_image_product"
+        verbose_name_plural = "Изображения продуктов"
 
 
 class UserInfo(models.Model):
@@ -120,6 +136,7 @@ class UserInfo(models.Model):
 
     class Meta:
         db_table = "user_info"
+        verbose_name_plural = "Пользователи"
 
 
 class Bonus(models.Model):
@@ -131,6 +148,7 @@ class Bonus(models.Model):
 
     class Meta:
         ordering = ["date_end"]
+        verbose_name_plural = "Бонусы"
 
     def __str__(self):
         return '%s %d %s - %s' % (self.user.email, self.quantity, self.date_start, self.date_end)
@@ -149,6 +167,7 @@ class Order(models.Model):
 
     class Meta:
         ordering = ["order_date"]
+        verbose_name_plural = "Заказы пользователей"
 
     def __str__(self):
         return '%s: order - %d %s' % (self.user.email, self.id, self.order_date)
@@ -166,6 +185,7 @@ class OrderProduct(models.Model):
 
     class Meta:
         db_table = "store_order_product"
+        verbose_name_plural = "Информация о заказе"
 
 
 class Basket(models.Model):
@@ -173,6 +193,9 @@ class Basket(models.Model):
                                 verbose_name="Товар")
     user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Выберите пользователя",
                              verbose_name="Пользователь")
+
+    class Meta:
+        verbose_name_plural = "Корзины пользователей"
 
     def __str__(self):
         return '%s %s' % (self.user.email, self.product.name)
