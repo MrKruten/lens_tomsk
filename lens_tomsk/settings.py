@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='foo')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get('DEBUG', default=0))
-
+CSRF_COOKIE_SECURE = False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ancient-beyond-12836.herokuapp.com']
 
 # Application definition
