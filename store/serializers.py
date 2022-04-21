@@ -26,10 +26,12 @@ class OptionSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    options = OptionSerializer(read_only=True, many=True)
+    categories = CategorySerializer(read_only=True, many=True)
+
     class Meta:
         model = Product
-        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture')
-        # , 'categories', 'options'
+        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture', 'categories', 'options')
 
 
 class CharacteristicSerializer(serializers.ModelSerializer):
