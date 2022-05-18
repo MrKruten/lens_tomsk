@@ -25,13 +25,20 @@ class OptionSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class DiscountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Discount
+        fields = ('id', 'percentage', 'date_start', 'date_end')
+
+
 class ProductSerializer(serializers.ModelSerializer):
     options = OptionSerializer(read_only=True, many=True)
     categories = CategorySerializer(read_only=True, many=True)
+    discount = DiscountSerializer(read_only=True, many=True)
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture', 'categories', 'options')
+        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture', 'categories', 'options', 'discount')
 
 
 class CharacteristicSerializer(serializers.ModelSerializer):
@@ -45,11 +52,6 @@ class OptionValueSerializer(serializers.ModelSerializer):
         model = OptionValue
         fields = ('id', 'option', 'value')
 
-
-class DiscountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Discount
-        fields = ('id', 'percentage', 'date_start', 'date_end', 'product')
 
 
 class ImageProductSerializer(serializers.ModelSerializer):
