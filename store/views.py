@@ -74,7 +74,7 @@ class ProductView(viewsets.ViewSet):
     def list(self, request):
         queryset = Product.objects.all()
         serializer = ProductSerializer(queryset, many=True)
-        print(serializer.data['name'])
+
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
