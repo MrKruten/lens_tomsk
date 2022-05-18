@@ -32,7 +32,7 @@ class DiscountSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    manufacture = serializers.CharField(source=Manufacture.name, read_only=True)
+    manufacture = serializers.CharField(source='manufacture.name', read_only=True)
     options = OptionSerializer(read_only=True, many=True)
     categories = CategorySerializer(read_only=True, many=True)
     discount = DiscountSerializer(read_only=True, many=True)
