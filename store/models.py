@@ -199,3 +199,16 @@ class Basket(models.Model):
 
     def __str__(self):
         return '%s %s' % (self.user.email, self.product.name)
+
+
+class Favourites(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите товар",
+                                verbose_name="Избранный товар")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Выберите пользователя",
+                             verbose_name="Пользователь")
+
+    class Meta:
+        verbose_name_plural = "Избранные товары пользователей"
+
+    def __str__(self):
+        return '%s %s' % (self.user.email, self.product.name)
