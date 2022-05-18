@@ -4,7 +4,7 @@ from rest_framework import serializers
 #   name = serializers.CharField()
 #  image = serializers.ImageField()
 from .models import Category, Basket, OrderProduct, Order, Bonus, UserInfo, ImageProduct, Discount, OptionValue, \
-    Manufacture, Product, Option, Characteristic
+    Manufacture, Product, Option, Characteristic, Favourites
 
 
 class ManufactureSerializer(serializers.ModelSerializer):
@@ -62,7 +62,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfo
         fields = (
-        'id', 'user', 'patronymic', 'telephone', 'date_of_birth', 'country', 'region', 'city', 'address', 'avatar')
+            'id', 'user', 'patronymic', 'telephone', 'date_of_birth', 'country', 'region', 'city', 'address', 'avatar')
 
 
 class BonusSerializer(serializers.ModelSerializer):
@@ -86,4 +86,10 @@ class OrderProductSerializer(serializers.ModelSerializer):
 class BasketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Basket
+        fields = ('id', 'product', 'user')
+
+
+class FavouritesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favourites
         fields = ('id', 'product', 'user')
