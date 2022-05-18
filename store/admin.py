@@ -39,7 +39,7 @@ class OptionValueInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_filter = ('price', 'quantity', 'name')
-    inlines = [ImageProductInline, DiscountInline, CharacteristicInline]
+    inlines = [ImageProductInline, CharacteristicInline]
 
 
 @admin.register(Option)

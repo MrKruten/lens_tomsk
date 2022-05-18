@@ -35,6 +35,26 @@ class Option(models.Model):
         return self.name
 
 
+class Discount(models.Model):
+    percentage = models.DecimalField(max_digits=10, decimal_places=2, help_text="Введите процент скидки",
+                                     verbose_name="Процент скидки")
+    date_start = models.DateField(help_text="Введите дату начала акции", verbose_name="Дата начала акции")
+    date_end = models.DateField(help_text="Введите дата окончания акции", verbose_name="Дата окончания акции")
+
+    class Meta:
+        ordering = ["-date_end"]
+        verbose_name_plural = "Скидки"
+
+    def __str__(self):
+        return 'скидка %s процентов с %s по %s' % (self.percentage, self.date_start, self.date_end)
+
+    @property
+    def is_overdue(self):
+        if self.date_end and date.today() > self.date_end:
+            return True
+        return False
+
+
 class Product(models.Model):
     name = models.CharField(max_length=64, help_text="Введите название продукта", verbose_name="Название продукта")
     price = models.DecimalField(max_digits=15, decimal_places=4, help_text="Введите цену", verbose_name="Цена продукта")
@@ -44,6 +64,7 @@ class Product(models.Model):
                                     verbose_name="Компания")
     categories = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории")
     options = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции")
+    discount = models.ManyToManyField(Discount, help_text="Выберите скидку", verbose_name="Скидка")
 
     class Meta:
         ordering = ["price", "quantity"]
@@ -75,27 +96,6 @@ class OptionValue(models.Model):
 
     def __str__(self):
         return '%s %s' % (self.option.name, self.value)
-
-
-class Discount(models.Model):
-    percentage = models.DecimalField(max_digits=10, decimal_places=2, help_text="Введите процент скидки",
-                                     verbose_name="Процент скидки")
-    date_start = models.DateField(help_text="Введите дату начала акции", verbose_name="Дата начала акции")
-    date_end = models.DateField(help_text="Введите дата окончания акции", verbose_name="Дата окончания акции")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт", verbose_name="Продукт")
-
-    class Meta:
-        ordering = ["-date_end"]
-        verbose_name_plural = "Скидки"
-
-    def __str__(self):
-        return '%s %s - %s' % (self.product.name, self.date_start, self.date_end)
-
-    @property
-    def is_overdue(self):
-        if self.date_end and date.today() > self.date_end:
-            return True
-        return False
 
 
 class ImageProduct(models.Model):
