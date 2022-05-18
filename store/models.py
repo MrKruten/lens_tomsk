@@ -62,11 +62,9 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField(help_text="Введите количество продукта", verbose_name="Количество продукта")
     manufacture = models.ForeignKey(Manufacture, on_delete=models.CASCADE, help_text="Выберите компанию",
                                     verbose_name="Компания")
-    categories = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории", blank=True,
-                                        null=True)
-    options = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции", blank=True, null=True)
-    discount = models.ManyToManyField(Discount, help_text="Выберите скидку", verbose_name="Скидка", blank=True,
-                                      null=True)
+    categories = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории", blank=True)
+    options = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции", blank=True)
+    discount = models.ManyToManyField(Discount, help_text="Выберите скидку", verbose_name="Скидка", blank=True)
 
     class Meta:
         ordering = ["price", "quantity"]
