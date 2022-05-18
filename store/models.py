@@ -62,10 +62,10 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField(help_text="Введите количество продукта", verbose_name="Количество продукта")
     manufacture = models.ForeignKey(Manufacture, on_delete=models.CASCADE, help_text="Выберите компанию",
                                     verbose_name="Компания")
-    categories = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории", blank=False,
+    categories = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории", blank=True,
                                         null=True)
-    options = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции", blank=False, null=True)
-    discount = models.ManyToManyField(Discount, help_text="Выберите скидку", verbose_name="Скидка", blank=False,
+    options = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции", blank=True, null=True)
+    discount = models.ManyToManyField(Discount, help_text="Выберите скидку", verbose_name="Скидка", blank=True,
                                       null=True)
 
     class Meta:
@@ -77,7 +77,7 @@ class Product(models.Model):
 
 
 class Characteristic(models.Model):
-    name = models.TextField(help_text="Введите название характеристики", verbose_name="Название категории")
+    name = models.TextField(help_text="Введите название характеристики", verbose_name="Название характеристики")
     description = models.TextField(help_text="Введите описание характеристики", verbose_name="Описание характеристики")
     product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт", verbose_name="Продукт")
 
