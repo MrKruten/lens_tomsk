@@ -65,6 +65,8 @@ class Product(models.Model):
     categories = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории", blank=True)
     options = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции", blank=True)
     discount = models.ManyToManyField(Discount, help_text="Выберите скидку", verbose_name="Скидка", blank=True)
+    is_recommended = models.BooleanField(default=False, blank=True, help_text="Рекомендовать этот продукт",
+                                         verbose_name="Рекомендовать?")
 
     class Meta:
         ordering = ["price", "quantity"]

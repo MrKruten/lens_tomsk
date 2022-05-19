@@ -38,7 +38,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture', 'categories', 'options', 'discount')
+        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture', 'categories', 'options', 'discount',
+                  'is_recommended')
 
 
 class CharacteristicSerializer(serializers.ModelSerializer):
@@ -51,7 +52,6 @@ class OptionValueSerializer(serializers.ModelSerializer):
     class Meta:
         model = OptionValue
         fields = ('id', 'option', 'value')
-
 
 
 class ImageProductSerializer(serializers.ModelSerializer):
