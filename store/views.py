@@ -13,11 +13,12 @@ def index(request):
 
 
 # ////////////////////////////////////////////////////
-
+# геты посты и т.д.
 # class ViewSet(viewsets.ModelViewSet):
 #     serializer_class = Serializer
 #     queryset = .objects.all()
 
+# онли геты (для всех и для определенного)
 # class View(viewsets.ViewSet):
 #     def list(self, request):
 #         queryset = .objects.all()

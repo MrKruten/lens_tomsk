@@ -1,8 +1,5 @@
 from rest_framework import serializers
 
-# class CategorySerializer(serializers.Serializer):
-#   name = serializers.CharField()
-#  image = serializers.ImageField()
 from .models import Category, Basket, OrderProduct, Order, Bonus, UserInfo, ImageProduct, Discount, OptionValue, \
     Manufacture, Product, Option, Characteristic, Favourites
 
