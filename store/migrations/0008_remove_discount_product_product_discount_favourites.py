@@ -2,7 +2,6 @@
 
 from django.conf import settings
 from django.db import migrations, models
-import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
@@ -21,16 +20,5 @@ class Migration(migrations.Migration):
             model_name='product',
             name='discount',
             field=models.ManyToManyField(help_text='Выберите скидку', to='store.discount', verbose_name='Скидка'),
-        ),
-        migrations.CreateModel(
-            name='Favourites',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('product', models.ForeignKey(help_text='Выберите товар', on_delete=django.db.models.deletion.CASCADE, to='store.product', verbose_name='Избранный товар')),
-                ('user', models.ForeignKey(help_text='Выберите пользователя', on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Пользователь')),
-            ],
-            options={
-                'verbose_name_plural': 'Избранные товары пользователей',
-            },
         ),
     ]
