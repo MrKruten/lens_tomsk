@@ -55,6 +55,18 @@ class Discount(models.Model):
         return False
 
 
+class ImageProduct(models.Model):
+    image = models.ImageField(upload_to='images/products/%Y/%m/%d/', help_text="Загрузите изображение продукта",
+                              verbose_name="Изображение продукта")
+
+    def __str__(self):
+        return self.image
+
+    class Meta:
+        db_table = "store_image_product"
+        verbose_name_plural = "Изображения продуктов"
+
+
 class Product(models.Model):
     name = models.CharField(max_length=64, help_text="Введите название продукта", verbose_name="Название продукта")
     price = models.DecimalField(max_digits=15, decimal_places=4, help_text="Введите цену", verbose_name="Цена продукта")
@@ -65,6 +77,8 @@ class Product(models.Model):
     categories = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории", blank=True)
     options = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции", blank=True)
     discount = models.ManyToManyField(Discount, help_text="Выберите скидку", verbose_name="Скидка", blank=True)
+    image = models.ManyToManyField(ImageProduct, help_text="Загрузите изображение продукта",
+                              verbose_name="Изображение продукта", blank=True)
     is_recommended = models.BooleanField(default=False, blank=True, null=True, help_text="Рекомендовать этот продукт",
                                          verbose_name="Рекомендовать?")
 
@@ -98,19 +112,6 @@ class OptionValue(models.Model):
 
     def __str__(self):
         return '%s %s' % (self.option.name, self.value)
-
-
-class ImageProduct(models.Model):
-    image = models.ImageField(upload_to='images/products/%Y/%m/%d/', help_text="Загрузите изображение продукта",
-                              verbose_name="Изображение продукта")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт", verbose_name="Продукт")
-
-    def __str__(self):
-        return self.product.name
-
-    class Meta:
-        db_table = "store_image_product"
-        verbose_name_plural = "Изображения продуктов"
 
 
 class UserInfo(models.Model):

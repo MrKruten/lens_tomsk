@@ -28,11 +28,18 @@ class DiscountSerializer(serializers.ModelSerializer):
         fields = ('id', 'percentage', 'date_start', 'date_end')
 
 
+class ImageProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImageProduct
+        fields = ('id', 'image', 'product')
+
+
 class ProductSerializer(serializers.ModelSerializer):
     manufacture = serializers.CharField(source='manufacture.name', read_only=True)
     options = OptionSerializer(read_only=True, many=True)
     categories = CategorySerializer(read_only=True, many=True)
     discount = DiscountSerializer(read_only=True, many=True)
+    image = ImageProductSerializer(read_only=True, many=True)
 
     class Meta:
         model = Product
@@ -50,12 +57,6 @@ class OptionValueSerializer(serializers.ModelSerializer):
     class Meta:
         model = OptionValue
         fields = ('id', 'option', 'value')
-
-
-class ImageProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ImageProduct
-        fields = ('id', 'image', 'product')
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
