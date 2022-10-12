@@ -19,17 +19,44 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image')
 
 
+class CategorySerializerForProduct(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['name']
+
+
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
         fields = ('id', 'name')
 
 
+class OptionSerializerForProduct(serializers.ModelSerializer):
+    class Meta:
+        model = Option
+        fields = ['name']
+
+
+class ImageProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImageProduct
+        fields = ['id', 'image', 'product']
+
+
+class ImageProductSerializerForProduct(serializers.ModelSerializer):
+    class Meta:
+        model = ImageProduct
+        fields = ['image']
+
+
 class ProductSerializer(serializers.ModelSerializer):
+    options = OptionSerializerForProduct(read_only=True, many=True)
+    categories = CategorySerializerForProduct(read_only=True, many=True)
+    images = ImageProductSerializerForProduct(many=True, read_only=True)
+
     class Meta:
         model = Product
-        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture')
-        # , 'categories', 'options'
+        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture', 'categories', 'options', 'images')
 
 
 class CharacteristicSerializer(serializers.ModelSerializer):
@@ -48,12 +75,6 @@ class DiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Discount
         fields = ('id', 'percentage', 'date_start', 'date_end', 'product')
-
-
-class ImageProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ImageProduct
-        fields = ('id', 'image', 'product')
 
 
 class UserInfoSerializer(serializers.ModelSerializer):

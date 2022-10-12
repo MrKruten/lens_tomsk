@@ -99,9 +99,9 @@ class Discount(models.Model):
 
 
 class ImageProduct(models.Model):
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE, help_text="Выберите продукт", verbose_name="Продукт")
     image = models.ImageField(upload_to='images/products/%Y/%m/%d/', help_text="Загрузите изображение продукта",
                               verbose_name="Изображение продукта")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт", verbose_name="Продукт")
 
     def __str__(self):
         return self.product.name
