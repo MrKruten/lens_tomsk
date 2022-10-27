@@ -14,23 +14,34 @@ class ManufactureSerializer(serializers.ModelSerializer):
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source="category.name")
+
     class Meta:
         model = SubCategory
-        fields = ('id', 'name')
+        fields = ['id', 'name', "category_name"]
+
+
+class SubCategorySerializerOnlyName(serializers.ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = ['name']
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    subcategory = SubCategorySerializer(many=True, read_only=True)
+    subcat = SubCategorySerializerOnlyName(many=True, read_only=True)
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'image', 'subcategory')
+        fields = ('id', 'name', 'subcat', 'image')
 
 
 class CategorySerializerForProduct(serializers.ModelSerializer):
+    # subcategories = SubCategorySerializerOnlyName(many=True, read_only=True)
+
     class Meta:
         model = Category
-        fields = ['name']
+        fields = "__all__"
+        # ['name', 'subcategories']
 
 
 class OptionSerializer(serializers.ModelSerializer):
@@ -51,7 +62,7 @@ class ImageProductSerializer(serializers.ModelSerializer):
         fields = ['id', 'image', 'product']
 
 
-class ImageProductSerializerForProduct(serializers.ModelSerializer):
+class ImageProductSerializerOnlyName(serializers.ModelSerializer):
     class Meta:
         model = ImageProduct
         fields = ['image']
@@ -59,12 +70,19 @@ class ImageProductSerializerForProduct(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     option = OptionSerializerForProduct(read_only=True, many=True)
-    image = ImageProductSerializerForProduct(many=True, read_only=True)
-    subcategory = SubCategorySerializer(many=True, read_only=True)
+    images = ImageProductSerializerOnlyName(many=True, read_only=True)
+    # subcategories = SubCategorySerializer(many=True, read_only=True)
+    category_name = serializers.CharField(source='category.name')
+    manufacture_name = serializers.CharField(source='manufacture.name')
+
+    # subcat = CategorySerializerForProduct(many=True, read_only=True)
+
+    # categories = CategorySerializerForProduct(many=True, read_only=True)
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture', 'category', 'subcategory', 'option', 'image', 'isRecommended')
+        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture_name', 'category_name', 'option',
+                  'images', 'isRecommended')
 
 
 class CharacteristicSerializer(serializers.ModelSerializer):
@@ -89,7 +107,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfo
         fields = (
-        'id', 'user', 'patronymic', 'telephone', 'date_of_birth', 'country', 'region', 'city', 'address', 'avatar')
+            'id', 'user', 'patronymic', 'telephone', 'date_of_birth', 'country', 'region', 'city', 'address', 'avatar')
 
 
 class BonusSerializer(serializers.ModelSerializer):

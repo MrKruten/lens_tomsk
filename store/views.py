@@ -6,7 +6,7 @@ from .models import Category, Manufacture, Option, Product, Characteristic, Opti
 from .serializers import ManufactureSerializer, CategorySerializer, OptionSerializer, ProductSerializer, \
     CharacteristicSerializer, OptionValueSerializer, DiscountSerializer, ImageProductSerializer, \
     UserInfoSerializer, BonusSerializer, OrderSerializer, OrderProductSerializer, BasketSerializer, \
-    SubCategorySerializer
+    SubCategorySerializer, CategorySerializerForProduct
 
 
 def index(request):
