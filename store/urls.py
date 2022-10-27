@@ -2,11 +2,12 @@ from rest_framework.routers import DefaultRouter
 
 from .views import CategoryView, ManufactureView, OptionView, ProductView, CharacteristicView, \
     OptionValueView, DiscountView, ImageProductView, UserInfoViewSet, BonusView, OrderView, \
-    OrderProductView, BasketViewSet
+    OrderProductView, BasketViewSet, SubCategoryView
 
 router = DefaultRouter()
 router.register(r'manufactures', ManufactureView, basename='manufacture')
 router.register(r'categories', CategoryView, basename='category')
+router.register(r'subcategories', SubCategoryView, basename='subcategory')
 router.register(r'options', OptionView, basename='option')
 router.register(r'products', ProductView, basename='product')
 router.register(r'characteristics', CharacteristicView, basename='characteristic')

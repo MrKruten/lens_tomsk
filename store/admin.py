@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Manufacture, Category, Bonus, Basket, UserInfo, Discount, Characteristic, OrderProduct, Order, \
-    Option, ImageProduct, Product, OptionValue
+    Option, ImageProduct, Product, OptionValue, SubCategory
 
 admin.site.register(ImageProduct)
 
@@ -17,6 +17,10 @@ class ManufactureAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    list_filter = ['name']
+
+@admin.register(SubCategory)
+class SubCategoryAdmin(admin.ModelAdmin):
     list_filter = ['name']
 
 

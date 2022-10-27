@@ -2,10 +2,11 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
 from .models import Category, Manufacture, Option, Product, Characteristic, OptionValue, Discount, \
-    ImageProduct, UserInfo, Bonus, Order, OrderProduct, Basket
+    ImageProduct, UserInfo, Bonus, Order, OrderProduct, Basket, SubCategory
 from .serializers import ManufactureSerializer, CategorySerializer, OptionSerializer, ProductSerializer, \
     CharacteristicSerializer, OptionValueSerializer, DiscountSerializer, ImageProductSerializer, \
-    UserInfoSerializer, BonusSerializer, OrderSerializer, OrderProductSerializer, BasketSerializer
+    UserInfoSerializer, BonusSerializer, OrderSerializer, OrderProductSerializer, BasketSerializer, \
+    SubCategorySerializer
 
 
 def index(request):
@@ -54,6 +55,19 @@ class CategoryView(viewsets.ViewSet):
         queryset = Category.objects.all()
         category = get_object_or_404(queryset, pk=pk)
         serializer = CategorySerializer(category)
+        return Response(serializer.data)
+
+
+class SubCategoryView(viewsets.ViewSet):
+    def list(self, request):
+        queryset = SubCategory.objects.all()
+        serializer = SubCategorySerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = SubCategory.objects.all()
+        subcategory = get_object_or_404(queryset, pk=pk)
+        serializer = SubCategorySerializer(subcategory)
         return Response(serializer.data)
 
 

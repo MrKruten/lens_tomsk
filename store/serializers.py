@@ -4,7 +4,7 @@ from rest_framework import serializers
 #   name = serializers.CharField()
 #  image = serializers.ImageField()
 from .models import Category, Basket, OrderProduct, Order, Bonus, UserInfo, ImageProduct, Discount, OptionValue, \
-    Manufacture, Product, Option, Characteristic
+    Manufacture, Product, Option, Characteristic, SubCategory
 
 
 class ManufactureSerializer(serializers.ModelSerializer):
@@ -13,10 +13,18 @@ class ManufactureSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = ('id', 'name')
+
+
 class CategorySerializer(serializers.ModelSerializer):
+    subcategory = SubCategorySerializer(many=True, read_only=True)
+
     class Meta:
         model = Category
-        fields = ('id', 'name', 'image')
+        fields = ('id', 'name', 'image', 'subcategory')
 
 
 class CategorySerializerForProduct(serializers.ModelSerializer):
@@ -50,13 +58,13 @@ class ImageProductSerializerForProduct(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    options = OptionSerializerForProduct(read_only=True, many=True)
-    categories = CategorySerializerForProduct(read_only=True, many=True)
-    images = ImageProductSerializerForProduct(many=True, read_only=True)
+    option = OptionSerializerForProduct(read_only=True, many=True)
+    image = ImageProductSerializerForProduct(many=True, read_only=True)
+    subcategory = SubCategorySerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture', 'categories', 'options', 'images')
+        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture', 'category', 'subcategory', 'option', 'image', 'isRecommended')
 
 
 class CharacteristicSerializer(serializers.ModelSerializer):

@@ -13,10 +13,24 @@ class Manufacture(models.Model):
         return self.name
 
 
+class SubCategory(models.Model):
+    name = models.CharField(max_length=64, help_text="Введите название подкатегории",
+                            verbose_name="Название подкатегории")
+
+    class Meta:
+        verbose_name_plural = "Подкатегории"
+
+    def __str__(self):
+        return self.name
+
+
 class Category(models.Model):
     name = models.CharField(max_length=64, help_text="Введите название категории", verbose_name="Название категории")
     image = models.ImageField(upload_to='images/categories/%Y/%m/%d/', help_text="Загрузите изображение",
                               verbose_name="Изображение категории", null=True, blank=True, )
+    subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, help_text="Выберите Подкатегорию",
+                                 verbose_name="Подкатегория")
+
 
     class Meta:
         verbose_name_plural = "Категории"
@@ -40,10 +54,14 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=15, decimal_places=4, help_text="Введите цену", verbose_name="Цена продукта")
     description = models.TextField(help_text="Введите описание", verbose_name="Описание продукта")
     quantity = models.PositiveIntegerField(help_text="Введите количество продукта", verbose_name="Количество продукта")
+    isRecommended = models.BooleanField(default=False, help_text="Добавить товар в рекомендованные?", verbose_name="Рекомендовать")
     manufacture = models.ForeignKey(Manufacture, on_delete=models.CASCADE, help_text="Выберите компанию",
                                     verbose_name="Компания")
-    categories = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории")
-    options = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции")
+    #categories = models.ForeignKey(Category, help_text="Выберите категории", verbose_name="Категории", on_delete=models.CASCADE)
+    category = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории")
+    subcategory = models.ManyToManyField(SubCategory, help_text="Выберите подкатегории", verbose_name="Подкатегории")
+    option = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции")
+
 
     class Meta:
         ordering = ["price", "quantity"]
@@ -54,7 +72,7 @@ class Product(models.Model):
 
 
 class Characteristic(models.Model):
-    name = models.TextField(help_text="Введите название характеристики", verbose_name="Название категории")
+    name = models.TextField(help_text="Введите название характеристики", verbose_name="Название характеристики")
     description = models.TextField(help_text="Введите описание характеристики", verbose_name="Описание характеристики")
     product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт", verbose_name="Продукт")
 
@@ -164,6 +182,7 @@ class Order(models.Model):
     order_date = models.DateField(help_text="Введите дату заказа", verbose_name="Дата заказа")
     user = models.ForeignKey(User, on_delete=models.SET_NULL, help_text="Выберите пользователя",
                              verbose_name="Пользователь", null=True)
+    # order_price = models.DecimalField(max_digits=7, decimal_places=2, help_text="Введите цену", verbose_name="Сумма заказа")
 
     class Meta:
         ordering = ["order_date"]
@@ -179,6 +198,7 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, help_text="Выберите заказ",
                               verbose_name="Заказ")
     quantity = models.PositiveIntegerField(help_text="Введите количество товара", verbose_name="Количество товара")
+    # old_price =
 
     def __str__(self):
         return '%s %s %d' % (self.product.name, self.order, self.quantity)
@@ -191,6 +211,7 @@ class OrderProduct(models.Model):
 class Basket(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите товар",
                                 verbose_name="Товар")
+    #product = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории")
     user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Выберите пользователя",
                              verbose_name="Пользователь")
 
