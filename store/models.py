@@ -16,7 +16,7 @@ class Manufacture(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=64, help_text="Введите название категории", verbose_name="Название категории")
     image = models.ImageField(upload_to='images/categories/%Y/%m/%d/', help_text="Загрузите изображение",
-                              verbose_name="Изображение категории", null=True, blank=True, )
+                              verbose_name="Изображение категории", null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Категории"
@@ -27,11 +27,12 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, help_text="Выберите категорию",
-                                 verbose_name="Категория")
+                                 verbose_name="Категория", related_name="subcategories")
     name = models.CharField(max_length=64, help_text="Введите название подкатегории",
                             verbose_name="Название подкатегории")
 
     class Meta:
+        db_table = "store_subcategory_category"
         verbose_name_plural = "Подкатегории"
 
     def __str__(self):
@@ -59,7 +60,6 @@ class Product(models.Model):
                                     verbose_name="Компания")
     category = models.ForeignKey(Category, help_text="Выберите категории", verbose_name="Категории",
                                  on_delete=models.CASCADE)
-    # category = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории")
     subcategory = models.ManyToManyField(SubCategory, help_text="Выберите подкатегории", verbose_name="Подкатегории")
     option = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции")
 
@@ -100,7 +100,8 @@ class Discount(models.Model):
                                      verbose_name="Процент скидки")
     date_start = models.DateField(help_text="Введите дату начала акции", verbose_name="Дата начала акции")
     date_end = models.DateField(help_text="Введите дата окончания акции", verbose_name="Дата окончания акции")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт", verbose_name="Продукт")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт",
+                                verbose_name="Продукт", related_name="discounts")
 
     class Meta:
         ordering = ["-date_end"]
@@ -132,7 +133,7 @@ class ImageProduct(models.Model):
 
 class UserInfo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Выберите пользователя",
-                             verbose_name="Пользователь")
+                             verbose_name="Пользователь", related_name='user_info')
     patronymic = models.CharField(max_length=64, help_text="Введите отчество", verbose_name="Отчество", null=True,
                                   blank=True)
     telephone = models.CharField(max_length=11, null=True, blank=True, help_text="Введите номер телефона",
@@ -160,7 +161,7 @@ class UserInfo(models.Model):
 
 class Bonus(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Выберите пользователя",
-                             verbose_name="Пользователь")
+                             verbose_name="Пользователь", related_name='bonuses')
     quantity = models.PositiveIntegerField(help_text="Введите количество бонусов", verbose_name="Количество бонусов")
     date_start = models.DateField(help_text="Введите дату начала", verbose_name="Дата начала")
     date_end = models.DateField(help_text="Введите дату окончания", verbose_name="Дата окончания")
@@ -182,9 +183,9 @@ class Bonus(models.Model):
 class Order(models.Model):
     order_date = models.DateField(help_text="Введите дату заказа", verbose_name="Дата заказа")
     user = models.ForeignKey(User, on_delete=models.SET_NULL, help_text="Выберите пользователя",
-                             verbose_name="Пользователь", null=True)
+                             verbose_name="Пользователь", null=True, related_name='orders_by_user')
 
-    # order_price = models.DecimalField(max_digits=7, decimal_places=2, help_text="Введите цену", verbose_name="Сумма заказа")
+    # order_price = models.DecimalField(max_digits=7, decimal_places=2, help_text="Введите цену", verbose_name="Сумма заказа") хз надо ли это тут...
 
     class Meta:
         ordering = ["order_date"]
@@ -198,10 +199,9 @@ class OrderProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, help_text="Выберите продукт",
                                 verbose_name="Продукт", null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, help_text="Выберите заказ",
-                              verbose_name="Заказ")
+                              verbose_name="Заказ", related_name='products_in_order')
     quantity = models.PositiveIntegerField(help_text="Введите количество товара", verbose_name="Количество товара")
-
-    # old_price =
+    old_price = models.DecimalField(max_digits=15, decimal_places=4, help_text="Введите цену", verbose_name="Старая цена продукта")
 
     def __str__(self):
         return '%s %s %d' % (self.product.name, self.order, self.quantity)
@@ -212,9 +212,9 @@ class OrderProduct(models.Model):
 
 
 class Basket(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите товар",
-                                verbose_name="Товар")
-    # product = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории")
+    # product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите товар",
+    #                             verbose_name="Товар", related_name='baskets')
+    product = models.ManyToManyField(Product, help_text="Выберите товар", verbose_name="Товар")
     user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Выберите пользователя",
                              verbose_name="Пользователь")
 
