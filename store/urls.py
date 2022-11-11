@@ -19,6 +19,7 @@ router.register(r'orders', OrderView, basename='order')
 router.register(r'ordersProduct', OrderProductView, basename='orderProduct')
 router.register(r'usersInfo', UserInfoViewSet, basename='userInfo')
 router.register(r'baskets', BasketViewSet, basename='basket')
+router.register(r'favourites', FavouritesViewSet, basename='favourites')
 
 
 urlpatterns = router.urls

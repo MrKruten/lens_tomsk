@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Manufacture, Category, Bonus, Basket, UserInfo, Discount, Characteristic, OrderProduct, Order, \
-    Option, ImageProduct, Product, OptionValue, SubCategory
+from .models import Manufacture, Category, Bonus, Basket, UserInfo, Discount, Characteristic, OrderProduct, Order, Option, ImageProduct, Product, OptionValue, SubCategory
 
 admin.site.register(ImageProduct)
 
@@ -24,6 +23,16 @@ class SubCategoryAdmin(admin.ModelAdmin):
     list_filter = ['name']
 
 
+@admin.register(Basket)
+class BasketAdmin(admin.ModelAdmin):
+    list_filter = ['user']
+
+
+@admin.register(Favourites)
+class FavouritesAdmin(admin.ModelAdmin):
+    list_filter = ['user']
+
+
 class ImageProductInline(admin.TabularInline):
     model = ImageProduct
 
@@ -44,6 +53,7 @@ class OptionValueInline(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     list_filter = ('name', 'price', 'quantity')
     inlines = [ImageProductInline, DiscountInline, CharacteristicInline]
+
 
 
 @admin.register(Option)

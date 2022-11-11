@@ -12,12 +12,14 @@ from .serializers import ManufactureSerializer, CategorySerializer, OptionSerial
 def index(request):
     return render(request, 'index.html')
 
-#////////////////////////////////////////////////////
 
+# ////////////////////////////////////////////////////
+# геты посты и т.д.
 # class ViewSet(viewsets.ModelViewSet):
 #     serializer_class = Serializer
 #     queryset = .objects.all()
 
+# онли геты (для всех и для определенного)
 # class View(viewsets.ViewSet):
 #     def list(self, request):
 #         queryset = .objects.all()
@@ -30,7 +32,7 @@ def index(request):
 #         serializer = Serializer(user)
 #         return Response(serializer.data)
 
-#////////////////////////////////////////////////////
+# ////////////////////////////////////////////////////
 
 class ManufactureView(viewsets.ViewSet):
     def list(self, request):
@@ -218,3 +220,6 @@ class BasketViewSet(viewsets.ModelViewSet):
     #     return Response(serializer.data)
 
 
+class FavouritesViewSet(viewsets.ModelViewSet):
+    serializer_class = FavouritesSerializer
+    queryset = Favourites.objects.all()

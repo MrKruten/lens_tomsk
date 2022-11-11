@@ -49,6 +49,38 @@ class Option(models.Model):
         return self.name
 
 
+class Discount(models.Model):
+    percentage = models.DecimalField(max_digits=10, decimal_places=2, help_text="Введите процент скидки",
+                                     verbose_name="Процент скидки")
+    date_start = models.DateField(help_text="Введите дату начала акции", verbose_name="Дата начала акции")
+    date_end = models.DateField(help_text="Введите дата окончания акции", verbose_name="Дата окончания акции")
+
+    class Meta:
+        ordering = ["-date_end"]
+        verbose_name_plural = "Скидки"
+
+    def __str__(self):
+        return 'скидка %s процентов с %s по %s' % (self.percentage, self.date_start, self.date_end)
+
+    @property
+    def is_overdue(self):
+        if self.date_end and date.today() > self.date_end:
+            return True
+        return False
+
+
+class ImageProduct(models.Model):
+    image = models.ImageField(upload_to='images/products/%Y/%m/%d/', help_text="Загрузите изображение продукта",
+                              verbose_name="Изображение продукта")
+
+    def __str__(self):
+        return self.image
+
+    class Meta:
+        db_table = "store_image_product"
+        verbose_name_plural = "Изображения продуктов"
+
+
 class Product(models.Model):
     name = models.CharField(max_length=64, help_text="Введите название продукта", verbose_name="Название продукта")
     price = models.DecimalField(max_digits=15, decimal_places=4, help_text="Введите цену", verbose_name="Цена продукта")
@@ -129,8 +161,8 @@ class ImageProduct(models.Model):
     class Meta:
         db_table = "store_image_product"
         verbose_name_plural = "Изображения продуктов"
-
-
+        
+        
 class UserInfo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Выберите пользователя",
                              verbose_name="Пользователь", related_name='user_info')
@@ -220,6 +252,19 @@ class Basket(models.Model):
 
     class Meta:
         verbose_name_plural = "Корзины пользователей"
+
+    def __str__(self):
+        return '%s %s' % (self.user.email, self.product.name)
+
+
+class Favourites(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите товар",
+                                verbose_name="Избранный товар")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Выберите пользователя",
+                             verbose_name="Пользователь")
+
+    class Meta:
+        verbose_name_plural = "Избранные товары пользователей"
 
     def __str__(self):
         return '%s %s' % (self.user.email, self.product.name)
