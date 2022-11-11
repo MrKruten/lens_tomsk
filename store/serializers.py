@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from .models import Category, Basket, OrderProduct, Order, Bonus, UserInfo, ImageProduct, Discount, OptionValue, \
-    Manufacture, Product, Option, Characteristic, Favourites
+from .models import Category, Basket, OrderProduct, Order, Bonus, UserInfo, ImageProduct, Discount, OptionValue, Manufacture, Product, Option, Characteristic, SubCategory
 
 
 class ManufactureSerializer(serializers.ModelSerializer):
@@ -10,10 +9,32 @@ class ManufactureSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class SubCategorySerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source="category.name")
+
+    class Meta:
+        model = SubCategory
+        fields = ['id', 'name', "category_name"]
+
+
+class SubCategorySerializerOnlyName(serializers.ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = ['name']
+
+
 class CategorySerializer(serializers.ModelSerializer):
+    subcategories = SubCategorySerializerOnlyName(many=True, read_only=True)
+
     class Meta:
         model = Category
-        fields = ('id', 'name', 'image')
+        fields = ['id', 'name', 'subcategories', 'image']
+
+
+class CategorySerializerForProduct(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
 
 
 class OptionSerializer(serializers.ModelSerializer):
@@ -22,29 +43,48 @@ class OptionSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-class DiscountSerializer(serializers.ModelSerializer):
+class OptionSerializerForProduct(serializers.ModelSerializer):
     class Meta:
-        model = Discount
-        fields = ('id', 'percentage', 'date_start', 'date_end')
+        model = Option
+        fields = ['name']
 
 
 class ImageProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageProduct
-        fields = ('id', 'image', 'product')
+        fields = ['id', 'image', 'product']
+
+
+class ImageProductSerializerOnlyName(serializers.ModelSerializer):
+    class Meta:
+        model = ImageProduct
+        fields = ['image']
+
+
+class DiscountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Discount
+        fields = ('id', 'percentage', 'date_start', 'date_end', 'product')
+
+
+class DiscountSerializerForProduct(serializers.ModelSerializer):
+    class Meta:
+        model = Discount
+        fields = ('percentage', 'date_start', 'date_end')
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    manufacture = serializers.CharField(source='manufacture.name', read_only=True)
-    options = OptionSerializer(read_only=True, many=True)
-    categories = CategorySerializer(read_only=True, many=True)
-    discount = DiscountSerializer(read_only=True, many=True)
-    image = ImageProductSerializer(read_only=True, many=True)
+    option = OptionSerializerForProduct(read_only=True, many=True)
+    images = ImageProductSerializerOnlyName(many=True, read_only=True)
+    subcategory = SubCategorySerializerOnlyName(many=True, read_only=True)
+    category_name = serializers.CharField(source='category.name')
+    manufacture_name = serializers.CharField(source='manufacture.name')
+    discounts = DiscountSerializerForProduct(many=True, read_only=True)
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture', 'image', 'categories', 'options',
-                  'discount', 'is_recommended')
+        fields = ('id', 'name', 'price', 'description', 'quantity', 'manufacture_name', 'category_name',
+                  'subcategory', 'option', 'images', 'isRecommended', 'discounts')
 
 
 class CharacteristicSerializer(serializers.ModelSerializer):
@@ -72,16 +112,36 @@ class BonusSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'quantity', 'date_start', 'date_end')
 
 
-class OrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        fields = ('id', 'order_date', 'user')
-
-
 class OrderProductSerializer(serializers.ModelSerializer):
+    result = serializers.SerializerMethodField()
+
     class Meta:
         model = OrderProduct
-        fields = ('id', 'product', 'order', 'quantity')
+        fields = ('id', 'product', 'order', 'quantity', 'old_price', 'result')
+
+    def get_result(self, instance, *args):
+        result = instance.quantity * instance.old_price
+        return result
+
+
+class OrderProductSerializerForOrderInfo(serializers.ModelSerializer):
+    result = serializers.SerializerMethodField()
+
+    class Meta:
+        model = OrderProduct
+        fields = ('product', 'quantity', 'result')
+
+    def get_result(self, instance, *args):
+        result = instance.quantity * instance.old_price
+        return result
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    products_in_order = OrderProductSerializerForOrderInfo(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ('id', 'order_date', 'user', 'products_in_order')
 
 
 class BasketSerializer(serializers.ModelSerializer):

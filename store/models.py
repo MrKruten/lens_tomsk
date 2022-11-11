@@ -16,13 +16,27 @@ class Manufacture(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=64, help_text="Введите название категории", verbose_name="Название категории")
     image = models.ImageField(upload_to='images/categories/%Y/%m/%d/', help_text="Загрузите изображение",
-                              verbose_name="Изображение категории", null=True, blank=True, )
+                              verbose_name="Изображение категории", null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Категории"
 
     def __str__(self):
         return self.name
+
+
+class SubCategory(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, help_text="Выберите категорию",
+                                 verbose_name="Категория", related_name="subcategories")
+    name = models.CharField(max_length=64, help_text="Введите название подкатегории",
+                            verbose_name="Название подкатегории")
+
+    class Meta:
+        db_table = "store_subcategory_category"
+        verbose_name_plural = "Подкатегории"
+
+    def __str__(self):
+        return self.category.name
 
 
 class Option(models.Model):
@@ -72,18 +86,17 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=15, decimal_places=4, help_text="Введите цену", verbose_name="Цена продукта")
     description = models.TextField(help_text="Введите описание", verbose_name="Описание продукта")
     quantity = models.PositiveIntegerField(help_text="Введите количество продукта", verbose_name="Количество продукта")
+    isRecommended = models.BooleanField(default=False, help_text="Добавить товар в рекомендованные?",
+                                        verbose_name="Рекомендовать")
     manufacture = models.ForeignKey(Manufacture, on_delete=models.CASCADE, help_text="Выберите компанию",
                                     verbose_name="Компания")
-    categories = models.ManyToManyField(Category, help_text="Выберите категории", verbose_name="Категории", blank=True)
-    options = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции", blank=True)
-    discount = models.ManyToManyField(Discount, help_text="Выберите скидку", verbose_name="Скидка", blank=True)
-    image = models.ManyToManyField(ImageProduct, help_text="Загрузите изображение продукта",
-                              verbose_name="Изображение продукта", blank=True)
-    is_recommended = models.BooleanField(default=False, blank=True, null=True, help_text="Рекомендовать этот продукт",
-                                         verbose_name="Рекомендовать?")
+    category = models.ForeignKey(Category, help_text="Выберите категории", verbose_name="Категории",
+                                 on_delete=models.CASCADE)
+    subcategory = models.ManyToManyField(SubCategory, help_text="Выберите подкатегории", verbose_name="Подкатегории")
+    option = models.ManyToManyField(Option, help_text="Выберите опции", verbose_name="Опции")
 
     class Meta:
-        ordering = ["price", "quantity"]
+        ordering = ["name", "price", "quantity"]
         verbose_name_plural = "Товары"
 
     def __str__(self):
@@ -114,9 +127,45 @@ class OptionValue(models.Model):
         return '%s %s' % (self.option.name, self.value)
 
 
+class Discount(models.Model):
+    percentage = models.DecimalField(max_digits=10, decimal_places=2, help_text="Введите процент скидки",
+                                     verbose_name="Процент скидки")
+    date_start = models.DateField(help_text="Введите дату начала акции", verbose_name="Дата начала акции")
+    date_end = models.DateField(help_text="Введите дата окончания акции", verbose_name="Дата окончания акции")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите продукт",
+                                verbose_name="Продукт", related_name="discounts")
+
+    class Meta:
+        ordering = ["-date_end"]
+        verbose_name_plural = "Скидки"
+
+    def __str__(self):
+        return '%s %s - %s' % (self.product.name, self.date_start, self.date_end)
+
+    @property
+    def is_overdue(self):
+        if self.date_end and date.today() > self.date_end:
+            return True
+        return False
+
+
+class ImageProduct(models.Model):
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE, help_text="Выберите продукт",
+                                verbose_name="Продукт")
+    image = models.ImageField(upload_to='images/products/%Y/%m/%d/', help_text="Загрузите изображение продукта",
+                              verbose_name="Изображение продукта")
+
+    def __str__(self):
+        return self.product.name
+
+    class Meta:
+        db_table = "store_image_product"
+        verbose_name_plural = "Изображения продуктов"
+        
+        
 class UserInfo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Выберите пользователя",
-                             verbose_name="Пользователь")
+                             verbose_name="Пользователь", related_name='user_info')
     patronymic = models.CharField(max_length=64, help_text="Введите отчество", verbose_name="Отчество", null=True,
                                   blank=True)
     telephone = models.CharField(max_length=11, null=True, blank=True, help_text="Введите номер телефона",
@@ -144,7 +193,7 @@ class UserInfo(models.Model):
 
 class Bonus(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Выберите пользователя",
-                             verbose_name="Пользователь")
+                             verbose_name="Пользователь", related_name='bonuses')
     quantity = models.PositiveIntegerField(help_text="Введите количество бонусов", verbose_name="Количество бонусов")
     date_start = models.DateField(help_text="Введите дату начала", verbose_name="Дата начала")
     date_end = models.DateField(help_text="Введите дату окончания", verbose_name="Дата окончания")
@@ -166,7 +215,9 @@ class Bonus(models.Model):
 class Order(models.Model):
     order_date = models.DateField(help_text="Введите дату заказа", verbose_name="Дата заказа")
     user = models.ForeignKey(User, on_delete=models.SET_NULL, help_text="Выберите пользователя",
-                             verbose_name="Пользователь", null=True)
+                             verbose_name="Пользователь", null=True, related_name='orders_by_user')
+
+    # order_price = models.DecimalField(max_digits=7, decimal_places=2, help_text="Введите цену", verbose_name="Сумма заказа") хз надо ли это тут...
 
     class Meta:
         ordering = ["order_date"]
@@ -180,8 +231,9 @@ class OrderProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, help_text="Выберите продукт",
                                 verbose_name="Продукт", null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, help_text="Выберите заказ",
-                              verbose_name="Заказ")
+                              verbose_name="Заказ", related_name='products_in_order')
     quantity = models.PositiveIntegerField(help_text="Введите количество товара", verbose_name="Количество товара")
+    old_price = models.DecimalField(max_digits=15, decimal_places=4, help_text="Введите цену", verbose_name="Старая цена продукта")
 
     def __str__(self):
         return '%s %s %d' % (self.product.name, self.order, self.quantity)
@@ -192,8 +244,9 @@ class OrderProduct(models.Model):
 
 
 class Basket(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите товар",
-                                verbose_name="Товар")
+    # product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text="Выберите товар",
+    #                             verbose_name="Товар", related_name='baskets')
+    product = models.ManyToManyField(Product, help_text="Выберите товар", verbose_name="Товар")
     user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Выберите пользователя",
                              verbose_name="Пользователь")
 
