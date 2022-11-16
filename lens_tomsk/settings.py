@@ -21,15 +21,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = os.environ.get('SECRET_KEY', default='foo')
-SECRET_KEY = 'django-insecure-0l7-80f&=%%ad2)-@9@b)60)de@6tl1i0ubd7o-%qh6*u!89zb'
+
+# CHANGE
+SECRET_KEY = os.environ.get('SECRET_KEY', default='foo')
+# SECRET_KEY = 'django-insecure-0l7-80f&=%%ad2)-@9@b)60)de@6tl1i0ubd7o-%qh6*u!89zb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = int(os.environ.get('DEBUG', default=0))
-DEBUG = True
+
+# CHANGE
+DEBUG = int(os.environ.get('DEBUG', default=0))
+# DEBUG = True
+
 CSRF_COOKIE_SECURE = False
-#ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ancient-beyond-12836.herokuapp.com']
-ALLOWED_HOSTS = []
+
+# CHANGE
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ancient-beyond-12836.herokuapp.com']
+# ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -49,8 +56,11 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    # 'store.apps.DisableCSRF',
+
+    # CHANGE
+    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'store.apps.DisableCSRF',
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
