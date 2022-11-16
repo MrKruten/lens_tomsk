@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Category, Basket, OrderProduct, Order, Bonus, UserInfo, ImageProduct, Discount, OptionValue, Manufacture, Product, Option, Characteristic, SubCategory
+from .models import Category, Basket, OrderProduct, Order, Bonus, UserInfo, ImageProduct, Discount, OptionValue, Manufacture, Product, Option, Characteristic, SubCategory, Favourites
 
 
 class ManufactureSerializer(serializers.ModelSerializer):

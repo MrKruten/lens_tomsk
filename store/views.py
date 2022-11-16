@@ -2,11 +2,11 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
 from .models import Category, Manufacture, Option, Product, Characteristic, OptionValue, Discount, \
-    ImageProduct, UserInfo, Bonus, Order, OrderProduct, Basket, SubCategory
+    ImageProduct, UserInfo, Bonus, Order, OrderProduct, Basket, SubCategory, Favourites
 from .serializers import ManufactureSerializer, CategorySerializer, OptionSerializer, ProductSerializer, \
     CharacteristicSerializer, OptionValueSerializer, DiscountSerializer, ImageProductSerializer, \
     UserInfoSerializer, BonusSerializer, OrderSerializer, OrderProductSerializer, BasketSerializer, \
-    SubCategorySerializer, CategorySerializerForProduct
+    SubCategorySerializer, CategorySerializerForProduct, FavouritesSerializer
 
 
 def index(request):
