@@ -36,7 +36,7 @@ class SubCategory(models.Model):
         verbose_name_plural = "Подкатегории"
 
     def __str__(self):
-        return self.category.name
+        return self.name
 
 
 class Option(models.Model):
